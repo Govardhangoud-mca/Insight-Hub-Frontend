@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json", // Extends the base configuration
+  "compilerOptions": {
+    "target": "es2020", // Set target to ES2020 or higher
+    "lib": ["es2020", "dom"], // Include ES2020 and DOM libraries
+    "module": "esnext", // Use ES modules
+    "moduleResolution": "node", // Use Node.js module resolution
+    "strict": true, // Enable strict type-checking
+    "jsx": "react-jsx", // Support for React JSX
+    "esModuleInterop": true, // Enable ES module interop
+    "skipLibCheck": true, // Skip library checks for faster compilation
+    "forceConsistentCasingInFileNames": true, // Ensure consistent file naming
+    "resolveJsonModule": true // Allow importing JSON files
+  },
+  "include": ["src"], // Include the src directory
+  "exclude": ["node_modules"] // Exclude node_modules
+}
