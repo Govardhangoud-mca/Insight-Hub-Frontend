@@ -11,7 +11,7 @@ const LectureList2 = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:8083/api/lectures")
+    fetch("https://insight-hub-server-production.up.railway.app/api/lectures")
       .then((res) => {
         if (!res.ok) throw new Error(`Server error: ${res.statusText}`);
         return res.json();

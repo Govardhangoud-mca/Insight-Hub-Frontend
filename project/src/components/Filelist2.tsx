@@ -15,7 +15,7 @@ const FileList2: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8083/api/resource-files/all")
+      .get("https://insight-hub-server-production.up.railway.app/api/resource-files/all")
       .then((response) => {
         if (Array.isArray(response.data)) {
           setFiles(response.data);

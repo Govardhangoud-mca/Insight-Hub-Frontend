@@ -24,7 +24,7 @@ const UploadLecture = () => {
     const lectureData = { unit, title, instructor, subject, videoUrl };
 
     try {
-      const response = await fetch("http://localhost:8083/api/lectures", {
+      const response = await fetch("https://insight-hub-server-production.up.railway.app/api/lectures", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(lectureData),

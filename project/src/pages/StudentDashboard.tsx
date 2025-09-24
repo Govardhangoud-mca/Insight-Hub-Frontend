@@ -38,7 +38,7 @@ const StudentDashboard: React.FC = () => {
 
   const fetchSubjects = async () => {
     try {
-      const response = await axios.get("http://localhost:8083/api/faculty/subjects/all");
+      const response = await axios.get("https://insight-hub-server-production.up.railway.app/api/faculty/subjects/all");
       setSubjects(response.data);
       setFilteredSubjects(response.data);
       setError(null);

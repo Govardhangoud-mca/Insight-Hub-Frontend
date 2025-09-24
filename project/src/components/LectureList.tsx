@@ -18,7 +18,7 @@ const LectureList: React.FC = () => {
   const navigate = useNavigate(); // Initialize navigation
 
   useEffect(() => {
-    fetch("http://localhost:8083/api/lectures")
+    fetch("https://insight-hub-server-production.up.railway.app/api/lectures")
       .then((res) => {
         if (!res.ok) throw new Error(`Server error: ${res.statusText}`);
         return res.json();
@@ -32,7 +32,7 @@ const LectureList: React.FC = () => {
   }, []);
 
   const deleteLecture = (id: number) => {
-    fetch(`http://localhost:8083/api/lectures/${id}`, { method: "DELETE" })
+    fetch(`https://insight-hub-server-production.up.railway.app/api/lectures/${id}`, { method: "DELETE" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to delete lecture");
         setLectures((prevLectures) => prevLectures.filter((lecture) => lecture.id !== id));

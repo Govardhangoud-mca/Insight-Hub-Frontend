@@ -26,7 +26,7 @@ const SignUp = () => {
     }),
     onSubmit: async (values) => {
       try {
-        await axios.post('http://localhost:8083/api/auth/register', {
+        await axios.post('https://insight-hub-server-production.up.railway.app/api/auth/register', {
           name: values.name,
           email: values.email,
           password: values.password,

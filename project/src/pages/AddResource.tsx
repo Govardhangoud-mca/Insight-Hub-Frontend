@@ -22,7 +22,7 @@ const AddResource: React.FC = () => {
     if (uploadType === "link") {
       const newResource = { title, resourceLink };
       try {
-        const response = await fetch("http://localhost:8083/api/resources/add", {
+        const response = await fetch("https://insight-hub-server-production.up.railway.app/api/resources/add", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newResource),
@@ -47,7 +47,7 @@ const AddResource: React.FC = () => {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        await axios.post("http://localhost:8083/api/resource-files/upload", formData, {
+        await axios.post("https://insight-hub-server-production.up.railway.app/api/resource-files/upload", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
         setMessage("File uploaded successfully!");

@@ -16,7 +16,7 @@ const ResourcesList: React.FC = () => {
 
   const fetchResources = async () => {
     try {
-      const response = await fetch("http://localhost:8083/api/resources/all");
+      const response = await fetch("https://insight-hub-server-production.up.railway.app/api/resources/all");
       if (response.ok) {
         const data = await response.json();
         setResources(data);
@@ -35,7 +35,7 @@ const ResourcesList: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8083/api/resources/delete/${id}`, {
+      const response = await fetch(`https://insight-hub-server-production.up.railway.app/api/resources/delete/${id}`, {
         method: "DELETE",
       });
 

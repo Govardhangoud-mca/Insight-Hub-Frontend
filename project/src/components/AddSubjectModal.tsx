@@ -29,7 +29,7 @@ export const AddSubjectModal: React.FC<AddSubjectModalProps> = ({ isOpen, onClos
     const newSubject = { title, tutorName, semester, department, payment };
 
     try {
-      const response = await fetch('http://localhost:8083/api/faculty/subjects/add', {
+      const response = await fetch('https://insight-hub-server-production.up.railway.app/api/faculty/subjects/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include', // Ensures session-based authentication if needed

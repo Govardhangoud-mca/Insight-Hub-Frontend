@@ -32,7 +32,7 @@ const FacultyDashboard: React.FC = () => {
 
   const fetchSubjects = async () => {
     try {
-      const response = await axios.get("http://localhost:8083/api/faculty/subjects/all");
+      const response = await axios.get("https://insight-hub-server-production.up.railway.app/api/faculty/subjects/all");
       setSubjects(response.data);
       setError(null);
     } catch (err) {
@@ -53,7 +53,7 @@ const FacultyDashboard: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:8083/api/faculty/subjects/delete/${id}`);
+      await axios.delete(`https://insight-hub-server-production.up.railway.app/api/faculty/subjects/delete/${id}`);
       setSubjects(subjects.filter((s) => s.id !== id));
     } catch (error) {
       console.error("Error deleting subject:", error);

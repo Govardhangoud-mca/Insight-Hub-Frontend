@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:8083/students";
+const API_URL = "https://insight-hub-server-production.up.railway.app/students";
 
 export default function Students() {
   const [students, setStudents] = useState([]);

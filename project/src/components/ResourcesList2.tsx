@@ -16,7 +16,7 @@ const ResourcesList2: React.FC = () => {
 
   const fetchResources = async () => {
     try {
-      const response = await fetch("http://localhost:8083/api/resources/all");
+      const response = await fetch("https://insight-hub-server-production.up.railway.app/api/resources/all");
       if (response.ok) {
         const data = await response.json();
         setResources(data);
