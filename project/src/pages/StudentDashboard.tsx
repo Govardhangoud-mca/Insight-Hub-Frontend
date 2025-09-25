@@ -5,6 +5,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import { Department, Subject } from "../types";
 import { SearchFilters } from "../components/SearchFilters";
+import axiosInstance from "../api/axiosInstance";
 
 const StudentDashboard: React.FC = () => {
   const [department, setDepartment] = useState<Department | ''>('');

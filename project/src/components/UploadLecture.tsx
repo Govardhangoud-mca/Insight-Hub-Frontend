@@ -53,7 +53,7 @@ const UploadLecture = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
       <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-8">
-        <h2 className="text-3xl font-bold text-center text-blue-900 mb-6">Upload New Lecture</h2>
+        <h2 className="text-3xl font-bold text-center text-blue-900 mb-6">Add Subjects</h2>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         {success && <p className="text-green-500 text-center mb-4">{success}</p>}

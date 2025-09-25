@@ -1,10 +1,9 @@
+// src/api/axiosInstance.ts
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 const axiosInstance = axios.create({
-  baseURL: API_URL,
-  withCredentials: true, // To handle session-based authentication
+  baseURL: "https://insight-hub-server-production.up.railway.app", // Railway backend URL
+  withCredentials: true, // ✅ needed for session-based authentication
   headers: {
     "Content-Type": "application/json",
   },

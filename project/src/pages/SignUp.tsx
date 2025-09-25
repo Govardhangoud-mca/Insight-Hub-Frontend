@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../api/axiosInstance'; // ✅ use same axios config
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -25,16 +27,20 @@ const SignUp = () => {
       role: Yup.string().oneOf(['ADMIN', 'STUDENT', 'FACULTY'], 'Invalid role').required('Role is required'),
     }),
     onSubmit: async (values) => {
+      setError("");
+      setSuccess("");
       try {
-        await axios.post('https://insight-hub-server-production.up.railway.app/api/auth/register', {
+        const response = await axiosInstance.post("/api/auth/register", {
           name: values.name,
           email: values.email,
           password: values.password,
           role: values.role,
         });
-        navigate('/signin');
-      } catch (error) {
-        console.error('Signup failed:', error);
+
+        setSuccess(response.data || "Account created successfully!");
+        setTimeout(() => navigate("/signin"), 1500);
+      } catch (err: any) {
+        setError(err.response?.data || "Signup failed. Please try again.");
       }
     },
   });
@@ -44,16 +50,14 @@ const SignUp = () => {
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Sign Up</h2>
         <form onSubmit={formik.handleSubmit} className="space-y-4">
+          
           {/* Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
+            <label htmlFor="name" className="block text-sm font-medium">Full Name</label>
             <input
               type="text"
               id="name"
-              name="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              {...formik.getFieldProps("name")}
               className="mt-1 block w-full px-3 py-2 border rounded-md"
             />
             {formik.touched.name && formik.errors.name && (
@@ -63,14 +67,11 @@ const SignUp = () => {
 
           {/* Email */}
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium">Email</label>
             <input
               type="email"
               id="email"
-              name="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              {...formik.getFieldProps("email")}
               className="mt-1 block w-full px-3 py-2 border rounded-md"
             />
             {formik.touched.email && formik.errors.email && (
@@ -80,14 +81,11 @@ const SignUp = () => {
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium">Password</label>
             <input
               type="password"
               id="password"
-              name="password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              {...formik.getFieldProps("password")}
               className="mt-1 block w-full px-3 py-2 border rounded-md"
             />
             {formik.touched.password && formik.errors.password && (
@@ -97,14 +95,11 @@ const SignUp = () => {
 
           {/* Confirm Password */}
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium">Confirm Password</label>
             <input
               type="password"
               id="confirmPassword"
-              name="confirmPassword"
-              value={formik.values.confirmPassword}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              {...formik.getFieldProps("confirmPassword")}
               className="mt-1 block w-full px-3 py-2 border rounded-md"
             />
             {formik.touched.confirmPassword && formik.errors.confirmPassword && (
@@ -114,13 +109,10 @@ const SignUp = () => {
 
           {/* Role */}
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700">Role</label>
+            <label htmlFor="role" className="block text-sm font-medium">Role</label>
             <select
               id="role"
-              name="role"
-              value={formik.values.role}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
+              {...formik.getFieldProps("role")}
               className="mt-1 block w-full px-3 py-2 border rounded-md"
             >
               <option value="">-- Select Role --</option>
@@ -133,15 +125,17 @@ const SignUp = () => {
             )}
           </div>
 
-          {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition"
-            >
-              Create Account
-            </button>
-          </div>
+          {/* Messages */}
+          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+          {success && <div className="text-green-600 text-sm text-center">{success}</div>}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition"
+          >
+            Create Account
+          </button>
         </form>
       </div>
     </div>

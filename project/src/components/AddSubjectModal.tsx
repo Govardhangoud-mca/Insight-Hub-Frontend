@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { Department } from '../types';
-
+import axiosInstance from "../api/axiosInstance";
 interface AddSubjectModalProps {
   isOpen: boolean; 
   onClose: () => void;

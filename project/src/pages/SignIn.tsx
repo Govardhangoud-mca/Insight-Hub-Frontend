@@ -16,21 +16,25 @@ const SignIn: React.FC = () => {
     setError("");
 
     try {
-      const response = await axiosInstance.post("/api/auth/login", { email, password });
+      const response = await axiosInstance.post("/api/auth/login", { email, password }, { withCredentials: true });
+
       const { role, email: userEmail, sessionId } = response.data;
 
+      // Save session and role in localStorage
       localStorage.setItem("sessionId", sessionId);
       localStorage.setItem("userRole", role);
       localStorage.setItem("email", userEmail);
 
-      window.dispatchEvent(new Event("storage"));
+      // 🔹 Dispatch event so Navbar updates immediately
+      window.dispatchEvent(new Event("loginUpdate"));
 
+      // Navigate based on role
       if (role === "ADMIN") navigate("/admin-dashboard");
       else if (role === "FACULTY") navigate("/faculty-dashboard");
       else if (role === "STUDENT") navigate("/student-dashboard");
       else setError("Invalid role. Please contact support.");
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || "Sign-in failed. Please try again.");
+      setError(err.response?.data?.error || "Sign-in failed. Please try again.");
     } finally {
       setLoading(false);
     }

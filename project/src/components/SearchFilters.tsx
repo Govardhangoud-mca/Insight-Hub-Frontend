@@ -1,7 +1,7 @@
 import React from 'react';
 import { Department } from '../types';
 import { Search } from 'lucide-react';
-
+import axiosInstance from "../api/axiosInstance";
 interface SearchFiltersProps {
   department: Department | '';
   semester: number | '';
