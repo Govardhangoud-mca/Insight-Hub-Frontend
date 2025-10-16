@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import 'aos/dist/aos.css';
+import AOS from "aos"; // ✅ import AOS here
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -22,6 +24,14 @@ import FileList2 from "./components/Filelist2";
 import ResourcesList2 from "./components/ResourcesList2";
 
 function App() {
+  useEffect(() => {
+    AOS.init({
+      duration: 800, // animation duration in ms
+      once: true,    // animations happen only once when scrolling
+      easing: "ease-in-out",
+    });
+  }, []);
+
   return (
     <Router>
       <div className="min-h-screen flex flex-col">

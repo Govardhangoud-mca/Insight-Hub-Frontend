@@ -1,27 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { FaPlay, FaFileDownload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import Swal from "sweetalert2";
+import { Play, FileDown, BookOpen, Search, Filter } from "lucide-react";
 
 const LectureList2 = () => {
-  const [lectures, setLectures] = useState([]);
+  const [lectures, setLectures] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("All");
   const [selectedUnit, setSelectedUnit] = useState("All");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://insight-hub-server-production.up.railway.app/api/lectures")
+    AOS.init({ duration: 800, once: true });
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/lectures")
       .then((res) => {
         if (!res.ok) throw new Error(`Server error: ${res.statusText}`);
         return res.json();
       })
       .then((data) => {
         setLectures(Array.isArray(data) ? data : []);
+        Swal.fire({
+          title: "Lectures Loaded Successfully!",
+          icon: "success",
+          confirmButtonColor: "#4f46e5",
+          timer: 1800,
+          showConfirmButton: false,
+        });
       })
-      .catch((error) => {
-        setError(error.message);
-      });
+      .catch((error) => setError(error.message));
   }, []);
 
   const uniqueSubjects = ["All", ...new Set(lectures.map((lecture) => lecture.subject))];
@@ -35,75 +48,127 @@ const LectureList2 = () => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-8 bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl rounded-lg mt-10 text-white">
-      <h2 className="text-4xl font-extrabold mb-6 text-center">UNIT LIST</h2>
+    <div className="min-h-screen px-6 py-10 bg-gradient-to-br from-blue-950 via-indigo-900 to-purple-900 text-white">
+      {/* Header */}
+      {/* Header */}
+      <motion.h2
+        className="text-2xl md:text-3xl font-extrabold text-center mb-10 mt-16 tracking-wide"
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        📘 Explore Your Lectures
+      </motion.h2>
 
-      {error && <p className="text-red-300 text-center">{error}</p>}
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <input
-          type="text"
-          placeholder="Search by title..."
-          className="w-full md:w-1/3 p-3 border border-white rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <select
-          className="w-full md:w-1/3 p-3 border border-white rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
-          value={selectedSubject}
-          onChange={(e) => setSelectedSubject(e.target.value)}
-        >
-          {uniqueSubjects.map((subject) => (
-            <option key={subject} value={subject}>{subject}</option>
-          ))}
-        </select>
-        <select
-          className="w-full md:w-1/3 p-3 border border-white rounded-lg focus:ring-2 focus:ring-yellow-400 text-black"
-          value={selectedUnit}
-          onChange={(e) => setSelectedUnit(e.target.value)}
-        >
-          {unitOptions.map((unit) => (
-            <option key={unit} value={unit}>{unit}</option>
-          ))}
-        </select>
-      </div>
+      {error && <p className="text-red-400 text-center mb-6">{error}</p>}
 
+      {/* 🔍 Modern Search + Filter Bar */}
+      <motion.div
+        data-aos="fade-up"
+        className="max-w-5xl mx-auto mb-10 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-lg hover:shadow-indigo-500/30 transition-all"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="flex flex-col md:flex-row items-center gap-4">
+          {/* Search Input */}
+          <div className="relative w-full md:w-1/3">
+            <Search className="absolute left-3 top-3.5 text-indigo-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search lectures..."
+              className="w-full pl-10 pr-4 py-3 rounded-xl text-black focus:ring-4 focus:ring-indigo-400 outline-none shadow-md"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Subject Filter */}
+          <div className="relative w-full md:w-1/3">
+            <Filter className="absolute left-3 top-3.5 text-indigo-400 w-5 h-5" />
+            <select
+              className="w-full pl-10 pr-4 py-3 rounded-xl text-black focus:ring-4 focus:ring-indigo-400 outline-none shadow-md"
+              value={selectedSubject}
+              onChange={(e) => setSelectedSubject(e.target.value)}
+            >
+              {uniqueSubjects.map((subject) => (
+                <option key={subject}>{subject}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Unit Filter */}
+          <div className="relative w-full md:w-1/3">
+            <Filter className="absolute left-3 top-3.5 text-indigo-400 w-5 h-5" />
+            <select
+              className="w-full pl-10 pr-4 py-3 rounded-xl text-black focus:ring-4 focus:ring-indigo-400 outline-none shadow-md"
+              value={selectedUnit}
+              onChange={(e) => setSelectedUnit(e.target.value)}
+            >
+              {unitOptions.map((unit) => (
+                <option key={unit}>{unit}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Lecture Cards */}
       {filteredLectures.length === 0 ? (
-        <p className="text-gray-200 text-center">No lectures found.</p>
+        <p className="text-center text-gray-300 text-lg" data-aos="fade-up">
+          No lectures found. Try searching for another title.
+        </p>
       ) : (
-        <div className="grid md:grid-cols-2 gap-6">
-          {filteredLectures.map((lecture) => (
-            <div key={lecture.id} className="p-6 border border-white rounded-lg shadow-md bg-white text-black relative transition transform hover:scale-105">
-              <h3 className="text-2xl font-bold text-gray-800">{lecture.title}</h3>
-              <p className="text-md text-gray-600">Instructor: {lecture.instructor}</p>
-              <p className="text-md text-gray-600">Subject: {lecture.subject}</p>
-              <p className="text-md text-gray-600">Unit: {lecture.unit}</p>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredLectures.map((lecture, index) => (
+            <motion.div
+              key={lecture.id}
+              data-aos="zoom-in"
+              transition={{ delay: index * 0.1 }}
+              className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-lg hover:shadow-indigo-500/40 hover:scale-[1.02] transition duration-300"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-indigo-300 flex items-center gap-2">
+                  <BookOpen className="w-6 h-6" /> {lecture.title}
+                </h3>
+                <span className="text-sm text-gray-300 bg-white/10 px-3 py-1 rounded-lg">
+                  {lecture.unit}
+                </span>
+              </div>
 
-              <div className="flex justify-between mt-4">
+              <p className="text-sm text-gray-300 mb-2">
+                Instructor: <span className="text-white">{lecture.instructor}</span>
+              </p>
+              <p className="text-sm text-gray-300 mb-2">
+                Subject: <span className="text-white">{lecture.subject}</span>
+              </p>
+
+              <div className="flex justify-between mt-6">
                 <a
                   href={lecture.videoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                  className="flex items-center gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-2 rounded-xl text-white shadow-md hover:shadow-indigo-400/40 hover:scale-105 transition-all"
                 >
-                  <FaPlay /> Watch
+                  <Play className="w-4 h-4" /> Watch
                 </a>
 
                 <button
                   onClick={() => navigate("/student-dashboard/filelist2")}
-                  className="flex items-center gap-2 px-5 py-2 rounded-full shadow-md transition text-sm font-medium bg-green-500 text-black hover:bg-yellow-600"
+                  className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 px-4 py-2 rounded-xl text-white shadow-md hover:scale-105 transition-all"
                 >
-                  <FaFileDownload /> Resources-Files
+                  <FileDown className="w-4 h-4" /> Files
                 </button>
 
                 <button
                   onClick={() => navigate("/student-dashboard/resourcelist2")}
-                  className="flex items-center gap-2 px-5 py-2 rounded-full shadow-md transition text-sm font-medium bg-yellow-500 text-black hover:bg-yellow-600"
+                  className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 px-4 py-2 rounded-xl text-black font-semibold shadow-md hover:scale-105 transition-all"
                 >
-                  <FaFileDownload /> Resources-Links
+                  <FileDown className="w-4 h-4" /> Links
                 </button>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}

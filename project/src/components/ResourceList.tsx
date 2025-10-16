@@ -6,7 +6,7 @@ const ResourceList = () => {
   const [selectedPdf, setSelectedPdf] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get("https://insight-hub-server-production.up.railway.app/api/resource-files/all")
+    axios.get("http://localhost:8080/api/resource-files/all")
       .then(response => setResources(response.data))
       .catch(error => console.error("Error fetching resources:", error));
   }, []);

@@ -17,7 +17,7 @@ const UnitList: React.FC<UnitListProps> = ({ subjectId }) => {
   useEffect(() => {
     if (!subjectId) return; // Prevent API call if subjectId is undefined
 
-    fetch(`https://insight-hub-server-production.up.railway.app/${subjectId}/units`)
+    fetch(`http://localhost:8080/${subjectId}/units`)
       .then((response) => response.json())
       .then((data) => setUnits(data))
       .catch((error) => console.error("Error fetching units:", error));

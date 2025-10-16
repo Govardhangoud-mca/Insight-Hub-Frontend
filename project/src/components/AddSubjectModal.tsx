@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { Department } from '../types';
-import axiosInstance from "../api/axiosInstance";
+import { motion, AnimatePresence } from 'framer-motion';
+import Swal from 'sweetalert2';
+
 interface AddSubjectModalProps {
-  isOpen: boolean; 
+  isOpen: boolean;
   onClose: () => void;
   onSubjectAdded: () => void; // Callback to refresh subject list after adding
 }
@@ -20,7 +22,6 @@ export const AddSubjectModal: React.FC<AddSubjectModalProps> = ({ isOpen, onClos
   const departments: Department[] = ['MCA', 'MBA', 'BTech', 'MTech'];
   const semesters = [1, 2, 3, 4, 5, 6, 7, 8];
 
-  // API Call to Add Subject
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -29,41 +30,44 @@ export const AddSubjectModal: React.FC<AddSubjectModalProps> = ({ isOpen, onClos
     const newSubject = { title, tutorName, semester, department, payment };
 
     try {
-      const response = await fetch('https://insight-hub-server-production.up.railway.app/api/faculty/subjects/add', {
+      const response = await fetch('http://localhost:8080/api/faculty/subjects/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // Ensures session-based authentication if needed
+        credentials: 'include',
         body: JSON.stringify(newSubject),
       });
 
       if (!response.ok) {
         let errorMessage = `Error ${response.status}: ${response.statusText}`;
-
         try {
-          const errorData = await response.json(); // Try parsing JSON
+          const errorData = await response.json();
           errorMessage = errorData.message || errorMessage;
-        } catch (jsonError) {
-          console.warn('Non-JSON error response:', await response.text()); // Log non-JSON responses
+        } catch {
+          console.warn('Non-JSON error response');
         }
-
         throw new Error(errorMessage);
       }
 
-      console.log('Subject added successfully:', newSubject);
+      Swal.fire({
+        icon: 'success',
+        title: 'Subject Added!',
+        text: `${title} has been added successfully.`,
+        background: '#1f2937',
+        color: '#fff',
+        confirmButtonColor: '#8b5cf6',
+        timer: 2000,
+      });
 
-      // Reset Form
+      // Reset form
       setTitle('');
       setTutorName('');
       setSemester(1);
       setDepartment('MCA');
       setPayment('');
 
-      // Notify Parent Component
       onSubjectAdded();
-
-      // Close Modal
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error adding subject:', err);
       setError(err.message || 'Failed to add subject. Please try again.');
     } finally {
@@ -71,113 +75,124 @@ export const AddSubjectModal: React.FC<AddSubjectModalProps> = ({ isOpen, onClos
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Add New Subject</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+        >
+          <motion.div
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-gradient-to-br from-slate-800 via-blue-900 to-slate-900 rounded-2xl w-full max-w-md p-6 shadow-2xl border border-white/20"
+          >
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-2xl font-bold text-white">Add New Subject</h2>
+              <button onClick={onClose} className="text-gray-300 hover:text-white transition-colors">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Subject Title */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subject Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              placeholder="Enter subject title"
-            />
-          </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Subject Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Subject Title</label>
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                  placeholder="Enter subject title"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
 
-          {/* Tutor Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tutor Name</label>
-            <input
-              type="text"
-              value={tutorName}
-              onChange={(e) => setTutorName(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              placeholder="Enter tutor name"
-            />
-          </div>
+              {/* Tutor Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Tutor Name</label>
+                <input
+                  type="text"
+                  value={tutorName}
+                  onChange={(e) => setTutorName(e.target.value)}
+                  required
+                  placeholder="Enter tutor name"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
 
-          {/* Department Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-            <select
-              value={department}
-              onChange={(e) => setDepartment(e.target.value as Department)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            >
-              {departments.map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
-                </option>
-              ))}
-            </select>
-          </div>
+              {/* Department */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Department</label>
+                <select
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value as Department)}
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  {departments.map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Semester Selection */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
-            <select
-              value={semester}
-              onChange={(e) => setSemester(Number(e.target.value))}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            >
-              {semesters.map((sem) => (
-                <option key={sem} value={sem}>
-                  Semester {sem}
-                </option>
-              ))}
-            </select>
-          </div>
+              {/* Semester */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Semester</label>
+                <select
+                  value={semester}
+                  onChange={(e) => setSemester(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  {semesters.map((sem) => (
+                    <option key={sem} value={sem}>
+                      Semester {sem}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          {/* Payment Amount */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Payment Amount</label>
-            <input
-              type="number"
-              value={payment}
-              onChange={(e) => setPayment(e.target.value)}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              placeholder="Enter payment amount"
-            />
-          </div>
+              {/* Payment */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Payment Amount</label>
+                <input
+                  type="number"
+                  value={payment}
+                  onChange={(e) => setPayment(e.target.value)}
+                  required
+                  placeholder="Enter payment amount"
+                  className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
 
-          {/* Buttons */}
-          <div className="flex justify-end gap-2 mt-6">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
-              disabled={loading}
-            >
-              {loading ? 'Adding...' : 'Add Subject'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              {/* Buttons */}
+              <div className="flex justify-end gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition-all duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg"
+                >
+                  {loading ? 'Adding...' : 'Add Subject'}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

@@ -15,7 +15,7 @@ const LectureList: React.FC = () => {
   const unit = searchParams.get("unit") || "";
 
   useEffect(() => {
-    fetch(`http://localhost:8083/api/lectures?subject=${subject}&unit=${unit}`)
+    fetch(`http://localhost:8080/api/lectures?subject=${subject}&unit=${unit}`)
       .then((res) => res.json())
       .then((data) => setLectures(data))
       .catch((err) => console.error("Error fetching lectures:", err));

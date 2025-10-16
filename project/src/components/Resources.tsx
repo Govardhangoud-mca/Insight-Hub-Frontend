@@ -18,7 +18,7 @@ const Resource: React.FC<ResourceProps> = ({ unitId }) => {
       return;
     }
 
-    fetch(`https://insight-hub-server-production.up.railway.app/api/units/${unitId}/resources`)
+    fetch(`http://localhost:8080/api/units/${unitId}/resources`)
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched Resources:", data); // Debugging API response

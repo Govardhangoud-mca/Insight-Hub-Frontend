@@ -18,7 +18,7 @@ const VideoList: React.FC<VideoListProps> = ({ unitId }) => {
       return;
     }
 
-    fetch(`https://insight-hub-server-production.up.railway.app/api/units/${unitId}/videos`)
+    fetch(`http://localhost:8080/api/units/${unitId}/videos`)
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched Videos:", data); // Debugging API response
